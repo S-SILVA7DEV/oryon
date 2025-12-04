@@ -14,7 +14,21 @@ function saveData() {
     renderAll();
 }
 
-// --- 1. ROTEAMENTO (SPA) ---
+// --- 1. MENU MOBILE (CORRIGIDO E BLINDADO) ---
+window.toggleSidebar = function() {
+    // Busca os elementos no momento do clique para garantir que existam
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    
+    if (sidebar && overlay) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+    } else {
+        console.error("Erro: Menu lateral ou Overlay não encontrados no HTML.");
+    }
+}
+
+// --- 2. ROTEAMENTO (SPA) ---
 window.router = function(viewId) {
     // Esconde todas as seções
     document.querySelectorAll('.view-section').forEach(el => {
@@ -35,11 +49,19 @@ window.router = function(viewId) {
     const btn = document.querySelector(`.nav-item[data-target="${viewId}"]`);
     if (btn) btn.classList.add('active');
     
+    // FECHA O MENU MOBILE AO NAVEGAR (Melhoria de UX)
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (sidebar && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        if(overlay) overlay.classList.remove('active');
+    }
+
     // Se for a aba de calendário, renderiza ele
     if(viewId === 'calendar') renderCalendar();
 }
 
-// --- 2. SISTEMA DE TAREFAS ---
+// --- 3. SISTEMA DE TAREFAS ---
 const dashList = document.getElementById("dash-tasks-list");
 const fullList = document.getElementById("full-tasks-list");
 
@@ -74,7 +96,7 @@ window.deleteTask = function(id) {
     }
 }
 
-// --- 3. MODAL NOVA TAREFA ---
+// --- 4. MODAL NOVA TAREFA ---
 const modal = document.getElementById('task-modal');
 const titleInput = document.getElementById('modal-title');
 const priorityInput = document.getElementById('modal-priority');
@@ -105,7 +127,7 @@ window.saveNewTask = function() {
     closeModal();
 }
 
-// --- 4. LISTA DE COMPRAS ---
+// --- 5. LISTA DE COMPRAS ---
 const shoppingListEl = document.getElementById('shopping-list');
 const shoppingInput = document.getElementById('shopping-input');
 
@@ -150,7 +172,7 @@ function renderShopping() {
     `).join('');
 }
 
-// --- 5. RENDERIZAÇÃO GERAL ---
+// --- 6. RENDERIZAÇÃO GERAL ---
 function renderAll() {
     // Renderiza lista completa
     if(fullList) {
@@ -168,7 +190,7 @@ function renderAll() {
     renderShopping();
 }
 
-// --- 6. POMODORO (Completo) ---
+// --- 7. POMODORO (Completo) ---
 let timerInterval;
 let mode = 'pomodoro'; 
 let totalTime = 25 * 60;
@@ -213,29 +235,23 @@ function updateDisplay() {
 window.switchMode = function(newMode) {
     clearInterval(timerInterval);
     mode = newMode;
-    
-    // Atualiza botões
     document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
     
     const btns = document.querySelectorAll('.mode-btn');
-    // Mapeamento simples baseada na ordem (0=Foco, 1=Curta, 2=Longa)
     if(newMode === 'pomodoro' && btns[0]) btns[0].classList.add('active');
     if(newMode === 'short' && btns[1]) btns[1].classList.add('active');
     if(newMode === 'long' && btns[2]) btns[2].classList.add('active');
 
-    // Define tempos padrão
     if (mode === 'pomodoro') totalTime = 25 * 60;
     else if (mode === 'short') totalTime = 5 * 60;
     else if (mode === 'long') totalTime = 15 * 60;
 
     timeLeft = totalTime;
     
-    // Reseta UI
     if(startBtn) startBtn.style.display = 'inline-flex';
     if(pauseBtn) pauseBtn.style.display = 'none';
     if(timerStatus) timerStatus.textContent = mode === 'pomodoro' ? 'Pronto?' : 'Descansar';
     
-    // Atualiza cor do tema (Neon)
     const wrapper = document.querySelector('.pomodoro-wrapper');
     if(wrapper) {
         wrapper.classList.remove('mode-short', 'mode-long');
@@ -245,12 +261,10 @@ window.switchMode = function(newMode) {
     updateDisplay();
 }
 
-// NOVA FUNÇÃO: Editar Tempo Manualmente
 window.editTimer = function() {
     pauseTimer();
     const currentMinutes = Math.floor(totalTime / 60);
     const input = prompt("Defina o tempo em minutos:", currentMinutes);
-    
     if (input && !isNaN(input) && input > 0) {
         const newMinutes = parseInt(input);
         totalTime = newMinutes * 60;
@@ -265,7 +279,6 @@ function startTimer() {
     if(pauseBtn) pauseBtn.style.display = 'inline-flex';
     if(timerStatus) timerStatus.textContent = "Focando...";
     
-    // Hack para desbloquear áudio
     alarmSound.play().then(() => {
         alarmSound.pause();
         alarmSound.currentTime = 0;
@@ -277,7 +290,7 @@ function startTimer() {
         
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
-            alarmSound.play(); // Toca som
+            alarmSound.play(); 
             alert("Tempo esgotado!");
             resetTimer();
         }
@@ -298,13 +311,11 @@ function resetTimer() {
     if(timerStatus) timerStatus.textContent = "Pronto?";
 }
 
-// Listeners
 if(startBtn) startBtn.addEventListener('click', startTimer);
 if(pauseBtn) pauseBtn.addEventListener('click', pauseTimer);
 if(resetBtn) resetBtn.addEventListener('click', resetTimer);
 
-
-// --- 7. FUNÇÕES EXTRAS (Tela Cheia, Wallpaper, Calendário) ---
+// --- 8. FUNÇÕES EXTRAS (Tela Cheia, Wallpaper, Calendário) ---
 
 window.toggleFullscreen = function() {
     const elem = document.getElementById('fullscreen-target');
@@ -321,7 +332,6 @@ window.changeWallpaper = function() {
     }
 }
 
-// Lógica do Calendário
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
 
@@ -361,7 +371,7 @@ function renderCalendar() {
     }
 }
 
-// --- 8. SISTEMA DE NOTAS INTEGRADO ---
+// --- 9. SISTEMA DE NOTAS ---
 const notesArea = document.getElementById('notes-area');
 const saveStatus = document.getElementById('save-status');
 const dashNotePreview = document.getElementById('dash-note-preview');
@@ -372,18 +382,15 @@ function updateDashNote(text) {
     }
 }
 
-// Carregar notas salvas
 const savedNotes = localStorage.getItem('oryon_notes') || "";
 if (notesArea) notesArea.value = savedNotes;
 updateDashNote(savedNotes);
 
-// Salvar ao digitar
 if (notesArea) {
     notesArea.addEventListener('input', () => {
         const text = notesArea.value;
         localStorage.setItem('oryon_notes', text);
         updateDashNote(text);
-        
         if (saveStatus) {
             saveStatus.textContent = "Salvando...";
             setTimeout(() => { saveStatus.textContent = "Salvo"; }, 1000);
@@ -395,10 +402,7 @@ if (notesArea) {
 document.addEventListener('DOMContentLoaded', () => {
     renderAll();
     router('dashboard');
-    
-    // Carregar wallpaper salvo
     const savedBg = localStorage.getItem('oryon_bg');
     if(savedBg) document.documentElement.style.setProperty('--pomo-bg', `url('${savedBg}')`);
-    
     updateDisplay();
 });
