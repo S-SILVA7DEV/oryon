@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Oryon - Productivity Suite</title>
+    
+    <!-- Configuração PWA (Modo App) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/base.css">
+    
+    <!-- Ícones -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- Fonte -->
+    <style>@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");</style>
+</head>
+
+<body>
+
+    <div class="layout">
+        
+        <!-- OVERLAY (Fundo escuro quando menu abre no mobile) -->
+        <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <!-- SIDEBAR -->
+        <nav class="side-menu" id="sidebar">
+            <div class="brand">Oryon</div> 
+
+            <!-- Links de Navegação -->
+            <div class="nav-links">
+                <button onclick="router('dashboard')" class="nav-item active" data-target="dashboard">
+                    <i class="ri-dashboard-line"></i> <span>Início</span>
+                </button>
+                <button onclick="router('tasks')" class="nav-item" data-target="tasks">
+                    <i class="ri-checkbox-circle-line"></i> <span>Tarefas</span>
+                </button>
+                <button onclick="router('pomodoro')" class="nav-item" data-target="pomodoro">
+                    <i class="ri-timer-line"></i> <span>Foco</span>
+                </button>
+                <button onclick="router('calendar')" class="nav-item" data-target="calendar">
+                    <i class="ri-calendar-line"></i> <span>Calendário</span>
+                </button>
+                <button onclick="router('shopping')" class="nav-item" data-target="shopping">
+                    <i class="ri-shopping-basket-line"></i> <span>Compras</span>
+                </button>
+                 <button onclick="router('notes')" class="nav-item" data-target="notes">
+                    <i class="ri-sticky-note-line"></i> <span>Notas</span>
+                </button>
+            </div>
+
+            <!-- CRÉDITOS COM INSTAGRAM -->
+            <div class="sidebar-footer">
+                <p>Criado por <strong>Steven Oliveira</strong></p>
+                <!-- Substitua pelo link do seu perfil -->
+                <a href="https://www.instagram.com/SEU_USUARIO" target="_blank" rel="noopener noreferrer" class="instagram-link">
+                    <i class="ri-instagram-line"></i>
+                </a>
+                <span class="version">v1.0 • Oryon</span>
+            </div>
+        </nav>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="main-content">
+            
+            <!-- HEADER -->
+            <header class="header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <!-- Botão Hambúrguer (Só aparece no mobile) -->
+                    <button class="btn-ghost mobile-only" onclick="toggleSidebar()">
+                        <i class="ri-menu-line" style="font-size: 1.5rem;"></i>
+                    </button>
+                    <!-- Marca visível apenas no mobile -->
+                    <div class="brand mobile-brand">Oryon</div>
+                </div>
+                
+                <div class="top-action">
+                    <button id="theme-toggle" data-theme-toggle class="btn-ghost" aria-label="Alternar tema">
+                        <i class="ri-moon-line"></i>
+                    </button>
+                    <div class="avatar">S</div>
+                </div>
+            </header>
+            
+            <!-- DASHBOARD -->
+            <section id="view-dashboard" class="view-section active">
+                <h1>Visão geral</h1>
+                <div class="grid-cards">
+                    <article class="panel panel-large">
+                        <h2>Tarefas Pendentes <span class="text-muted" id="dash-task-count">• 0</span></h2>
+                        <ul class="list-tasks" id="dash-tasks-list"></ul>
+                    </article>
+
+                    <article class="panel" onclick="router('notes')" style="cursor: pointer;">
+                        <h3>Notas Rápidas</h3>
+                        <p class="text-muted">Último lembrete:</p>
+                        <div id="dash-note-preview" class="note-widget">
+                            Carregando...
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- TAREFAS -->
+            <section id="view-tasks" class="view-section">
+                <div class="section-header">
+                    <h1>Minhas Tarefas</h1>
+                    <button class="btn-primary" onclick="openModal()">
+                        <i class="ri-add-line"></i> Nova
+                    </button>
+                </div>
+                <div class="panel">
+                    <ul class="list-tasks" id="full-tasks-list"></ul>
+                </div>
+            </section>
+
+            <!-- POMODORO -->
+            <section id="view-pomodoro" class="view-section">
+                <h1>Foco</h1>
+                <div class="pomodoro-container-center"> 
+                    <div class="pomodoro-wrapper" id="fullscreen-target">
+                        
+                        <button class="btn-fullscreen" style="right: 105px;" onclick="editTimer()" title="Definir Tempo"><i class="ri-settings-3-line"></i></button>
+                        <button class="btn-fullscreen" style="right: 60px;" onclick="changeWallpaper()" title="Trocar Imagem"><i class="ri-image-line"></i></button>
+                        <button class="btn-fullscreen" onclick="toggleFullscreen()" title="Modo Foco"><i class="ri-fullscreen-line"></i></button>
+
+                        <div class="timer-modes">
+                            <button class="mode-btn active" onclick="switchMode('pomodoro')">Foco</button>
+                            <button class="mode-btn" onclick="switchMode('short')">Curta</button>
+                            <button class="mode-btn" onclick="switchMode('long')">Longa</button>
+                        </div>
+
+                        <div class="timer-circle">
+                            <svg class="timer-svg" viewBox="0 0 380 380">
+                                <circle class="circle-bg" cx="190" cy="190" r="180"></circle>
+                                <circle id="progress-ring" class="circle-progress" cx="190" cy="190" r="180"></circle>
+                            </svg>
+                            <div class="timer-text">
+                                <span class="time-big" id="timer-display">25:00</span>
+                                <span class="status-text" id="timer-status">Pronto?</span>
+                            </div>
+                        </div>
+
+                        <div class="pomodoro-controls">
+                            <button class="btn-primary" id="start-btn">Iniciar</button>
+                            <button class="btn-warning" id="pause-btn" style="display: none;">Pausar</button>
+                            <button class="btn-ghost" id="reset-btn" style="background: rgba(255,255,255,0.2); color:white;"><i class="ri-refresh-line"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CALENDÁRIO -->
+            <section id="view-calendar" class="view-section">
+                <h1>Calendário</h1>
+                <div class="panel">
+                    <div class="calendar-header">
+                        <h2 id="month-year">Mês Ano</h2>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-ghost" onclick="changeMonth(-1)"><i class="ri-arrow-left-s-line"></i></button>
+                            <button class="btn-ghost" onclick="changeMonth(1)"><i class="ri-arrow-right-s-line"></i></button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid" id="calendar-grid"></div>
+                </div>
+            </section>
+
+            <!-- COMPRAS -->
+            <section id="view-shopping" class="view-section">
+                <h1>Compras</h1>
+                <div class="panel panel-large">
+                    <div class="shopping-input-container">
+                        <input type="text" id="shopping-input" class="form-control" placeholder="Adicionar item..." onkeypress="handleShoppingKey(event)">
+                        <button class="btn-primary" onclick="addShoppingItem()"><i class="ri-add-line"></i></button>
+                    </div>
+                    <ul class="list-tasks" id="shopping-list"></ul>
+                </div>
+            </section>
+
+            <!-- NOTAS -->
+            <section id="view-notes" class="view-section">
+                <h1>Bloco de Notas</h1>
+                <div class="panel" style="max-width: 600px; margin: 0 auto;">
+                    <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                        <p class="text-muted">Salvo automaticamente.</p>
+                        <span id="save-status" style="font-size: 0.8rem; color: var(--accent);">Salvo</span>
+                    </div>
+                    <textarea id="notes-area" class="form-control" style="resize: none; line-height: 1.6; font-size: 1.1rem; height: 300px;" placeholder="Escreva aqui..."></textarea>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL -->
+    <div id="task-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h2>Nova Tarefa</h2>
+            <div class="form-group"><label>Título</label><input type="text" id="modal-title" class="form-control" placeholder="Ex: Ler livro"></div>
+            <div class="form-group"><label>Prioridade</label><select id="modal-priority" class="form-control"><option value="high">Alta</option><option value="med">Média</option><option value="low">Baixa</option></select></div>
+            <div class="modal-actions"><button class="btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn-primary" onclick="saveNewTask()">Salvar</button></div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="assets/js/theme.js"></script>
+    <script src="assets/js/app.js"></script>
+    
+    <!-- SCRIPT PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js');
+            });
+        }
+    </script>
+</body>
+</html>

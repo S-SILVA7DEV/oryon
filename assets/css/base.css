@@ -1,0 +1,312 @@
+/* =========================================
+   1. VARIÁVEIS E TEMA (ROOT)
+   ========================================= */
+:root {
+    /* Tema Claro */
+    --bg: #f7f8fa;
+    --bg-alt: #ffffff;
+    --text: #1c1c1e;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --card: #ffffff;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --radius: 12px;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --sidebar-bg: #ffffffcc;
+    --sidebar-hover: #f1f5f9;
+    --gap: 1rem;
+
+    /* IMAGEM DE FUNDO DO POMODORO */
+    --pomo-bg: url('https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=2070&auto=format&fit=crop');
+}
+
+/* Tema Escuro */
+.dark-mode {
+    --bg: #0e0e11;
+    --bg-alt: #1a1a1d;
+    --text: #f5f5f5;
+    --text-muted: #9ca3af;
+    --border: #2d2d31;
+    --card: #1e1e22;
+    --accent: #4f46e5;
+    --accent-hover: #4338ca;
+    --shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+    --sidebar-bg: #141416cc;
+    --sidebar-hover: #232327;
+}
+
+/* =========================================
+   2. GLOBAIS
+   ========================================= */
+body, .layout, .panel, .side-menu, .header, input, button {
+    transition: background .25s, color .25s, border-color .25s, box-shadow .25s;
+}
+
+body {
+    margin: 0;
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden; /* Importante para layout de app */
+}
+
+h1 { margin-top: 0; margin-bottom: 1.5rem; font-size: 1.75rem; }
+h2 { font-size: 1.25rem; margin-bottom: 1rem; }
+.text-muted { color: var(--text-muted); font-size: 0.9rem; }
+
+/* Helper classes */
+.mobile-only { display: none !important; } /* Esconde por padrão no desktop */
+
+/* Botões */
+.btn-primary, .btn-warning {
+    color: white; border: none; padding: 10px 24px; border-radius: 8px;
+    font-size: 1rem; font-weight: 600; cursor: pointer; display: inline-flex;
+    align-items: center; gap: 8px; transition: background 0.2s;
+}
+.btn-primary { background: var(--accent); }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-warning { background: #eab308; }
+.btn-warning:hover { background: #ca8a04; }
+
+.btn-ghost {
+    background: transparent; border: none; cursor: pointer; color: var(--text);
+    font-size: 1.2rem; padding: 8px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+}
+.btn-ghost:hover { background: var(--sidebar-hover); }
+
+.btn-icon-danger {
+    background: transparent; color: #ef4444; border: none; cursor: pointer;
+    padding: 5px; border-radius: 4px; font-size: 1.2rem; display: flex; align-items: center;
+}
+.btn-icon-danger:hover { background: rgba(239, 68, 68, 0.1); }
+
+/* =========================================
+   3. LAYOUT (HEADER & SIDEBAR)
+   ========================================= */
+.layout { display: flex; height: 100vh; overflow: hidden; position: relative; }
+
+/* HEADER */
+.header {
+    height: 64px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 1.5rem; border-bottom: 1px solid var(--border); background: var(--bg-alt);
+    position: sticky; top: 0; z-index: 20; /* Z-index maior para ficar acima do conteúdo */
+}
+.brand { font-weight: 700; font-size: 1.25rem; color: var(--accent); }
+.top-action { display: flex; gap: 1rem; align-items: center; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: #dbeafe; color: #1e3a8a; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+
+/* OVERLAY DO MOBILE (Fundo escuro) */
+#sidebar-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5); z-index: 25; /* Entre header e sidebar */
+    opacity: 0; visibility: hidden; transition: all 0.3s;
+    backdrop-filter: blur(2px);
+}
+#sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+/* SIDEBAR */
+.side-menu {
+    width: 240px; border-right: 1px solid var(--border); padding: 1.5rem 1rem;
+    display: flex; flex-direction: column; gap: 0.5rem; background: var(--bg-alt);
+    justify-content: space-between; /* Empurra footer para o final */
+    z-index: 30; /* Acima de tudo no mobile */
+    transition: transform 0.3s ease;
+}
+
+/* Container de Links */
+.nav-links { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.side-menu button {
+    padding: 0.75rem 1rem; border-radius: 8px; color: var(--text-muted);
+    background: transparent; border: none; text-align: left; font-family: inherit;
+    font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500;
+}
+.side-menu button:hover { background: var(--sidebar-hover); color: var(--text); }
+.side-menu button.active { background: #eef2ff; color: var(--accent); font-weight: 600; }
+.dark-mode .side-menu button.active { background: rgba(79, 70, 229, 0.15); }
+
+/* RODAPÉ DA SIDEBAR (CRÉDITOS) */
+.sidebar-footer {
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+}
+.sidebar-footer p { margin: 0; }
+.sidebar-footer strong { color: var(--text); font-weight: 500; }
+.sidebar-footer .version { font-size: 0.65rem; opacity: 0.6; margin-top: 0.25rem;}
+
+/* Link do Instagram */
+.instagram-link {
+    display: inline-flex; align-items: center; color: var(--text-muted);
+    text-decoration: none; transition: color 0.2s;
+}
+.instagram-link:hover { color: #E1306C; /* Cor do Instagram */ }
+.instagram-link i { font-size: 1rem; }
+
+/* MAIN CONTENT */
+.main-content { flex: 1; padding: 0; overflow-y: auto; position: relative; }
+.view-section { display: none; animation: fadeIn 0.3s ease; padding: 2rem; }
+.view-section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* =========================================
+   4. COMPONENTES (Grid, Cards, Listas)
+   ========================================= */
+.grid-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap); align-items: start; }
+.panel { background: var(--card); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); }
+.panel-large { grid-column: span 2; }
+
+/* Listas */
+.list-tasks { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+.task-item, .shopping-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px; border-bottom: 1px solid var(--border); background: var(--card);
+}
+.task-item:last-child, .shopping-item:last-child { border-bottom: none; }
+.task-header { display: flex; align-items: center; gap: 10px; }
+.task-header h3 { margin: 0; font-size: 1rem; font-weight: 500; }
+.task-check { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+.task-item.done h3, .shopping-item.bought span { text-decoration: line-through; color: var(--text-muted); }
+
+.priority { font-size: 11px; padding: 4px 8px; border-radius: 999px; font-weight: 600; text-transform: uppercase; }
+.priority.high { background: #fee2e2; color: #b91c1c; } .priority.med { background: #fef3c7; color: #b45309; } .priority.low { background: #d1fae5; color: #047857; }
+.dark-mode .priority.high { background: rgba(185, 28, 28, 0.2); color: #fca5a5; }
+
+.shopping-input-container { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.note-widget { margin-top: 10px; font-size: 0.9rem; padding: 12px; background: var(--bg); border-radius: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* =========================================
+   5. MODAL
+   ========================================= */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+}
+.modal-overlay.open { opacity: 1; visibility: visible; }
+.modal-card {
+    background: var(--card); padding: 2rem; border-radius: var(--radius);
+    width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    transform: translateY(20px); transition: transform 0.3s ease;
+}
+.modal-overlay.open .modal-card { transform: translateY(0); }
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; }
+.form-control { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); box-sizing: border-box; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 1.5rem; }
+
+/* =========================================
+   6. POMODORO "IMMERSIVE"
+   ========================================= */
+.pomodoro-container-center { display: flex; justify-content: center; } /* Centraliza na tela */
+
+.pomodoro-wrapper {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 0.5rem 0; position: relative; width: 100%; height: auto; 
+    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), var(--pomo-bg);
+    background-size: cover; background-position: center;
+    border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); color: white;
+}
+
+.pomodoro-wrapper .time-big { color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.5); font-size: clamp(3rem, 10vw, 5.5rem); }
+.pomodoro-wrapper .status-text { color: rgba(255,255,255,0.9); }
+
+.pomodoro-wrapper .btn-fullscreen { 
+    position: absolute; top: 15px; right: 15px; background: transparent; border: none; 
+    font-size: 1.5rem; cursor: pointer; padding: 10px; border-radius: 50%; 
+    transition: background 0.2s; z-index: 50; color: rgba(255,255,255,0.8);
+}
+.pomodoro-wrapper .btn-fullscreen:hover { background: rgba(255,255,255,0.2); color: white; }
+
+.timer-modes {
+    display: flex; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 50px;
+    margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.1); gap: 5px; backdrop-filter: blur(5px);
+}
+.mode-btn { color: rgba(255,255,255,0.8); background: transparent; border: none; padding: 8px 20px; border-radius: 50px; cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.2s ease; }
+.mode-btn:hover { color: white; background: rgba(255,255,255,0.2); }
+.mode-btn.active { background: white; color: black; font-weight: 700; }
+
+.timer-circle {
+    position: relative; width: min(420px, 38vh); height: min(420px, 38vh); 
+    margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center;
+}
+.timer-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+.circle-bg { fill: none; stroke: rgba(255,255,255,0.15); stroke-width: 8; } 
+.circle-progress {
+    fill: none; stroke: var(--accent); stroke-width: 10; stroke-linecap: round;
+    stroke-dasharray: 1130; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear, stroke 0.3s;
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+}
+.timer-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+.status-text { font-size: 1rem; margin-top: 5px; text-transform: uppercase; letter-spacing: 2px; }
+.pomodoro-controls { display: flex; align-items: center; gap: 15px; margin-bottom: 1rem; }
+
+.mode-short .circle-progress { stroke: #10b981; } .mode-long .circle-progress { stroke: #8b5cf6; }
+
+/* TELA CHEIA */
+.pomodoro-wrapper:fullscreen, .pomodoro-wrapper:-webkit-full-screen {
+    width: 100%; height: 100%; border-radius: 0; padding: 0; margin: 0;
+    display: flex; align-items: center; justify-content: center;
+    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), var(--pomo-bg);
+    background-size: cover; background-position: center; background-color: #1a1a1d; 
+    overflow: hidden !important; 
+}
+.pomodoro-wrapper:fullscreen .timer-circle { width: min(500px, 70vh); height: min(500px, 70vh); }
+.pomodoro-wrapper:fullscreen .time-big { font-size: clamp(4rem, 15vh, 8rem); }
+.pomodoro-wrapper:fullscreen .btn-fullscreen { top: 30px; right: 30px; }
+
+/* =========================================
+   7. CALENDÁRIO
+   ========================================= */
+.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; max-width: 300px; margin-left: auto; margin-right: auto; }
+.calendar-header h2 { margin: 0; font-size: 1.25rem; color: var(--accent); }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; max-width: 300px; margin: 0 auto; }
+.day-name { font-weight: 600; color: var(--text-muted); font-size: 0.8rem; padding-bottom: 5px; text-transform: uppercase; }
+.calendar-day { aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 0.9rem; color: var(--text); cursor: default; transition: background 0.2s; }
+.calendar-day:hover:not(.empty) { background: var(--bg); }
+.calendar-day.today { background: var(--accent); color: white; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+.calendar-day.empty { background: transparent; }
+
+/* =========================================
+   8. RESPONSIVIDADE (MOBILE)
+   ========================================= */
+@media (max-width: 1024px) {
+    .grid-cards { grid-template-columns: repeat(2, 1fr); }
+    
+    /* Configuração do Menu Gaveta (Drawer) */
+    .side-menu {
+        position: fixed;
+        top: 0; left: 0; bottom: 0;
+        transform: translateX(-100%); /* Escondido fora da tela */
+        box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+    }
+    .side-menu.open { transform: translateX(0); } /* Abre quando tem a classe .open */
+    
+    .mobile-only { display: flex !important; }
+    .brand.mobile-brand { font-size: 1.2rem; margin-left: 10px; display: block !important; }
+}
+
+@media (max-width: 640px) {
+    .grid-cards { grid-template-columns: 1fr; }
+    .header { padding: 0.5rem 1rem; }
+    .view-section { padding: 1.5rem 1rem; } /* Padding lateral menor no mobile */
+    .panel-large { grid-column: span 1; }
+    
+    /* Pomodoro Mobile */
+    .time-big { font-size: 3.5rem; }
+    .pomodoro-controls { gap: 10px; }
+    .btn-primary { padding: 10px 16px; font-size: 0.9rem; }
+    
+    /* Calendário Mobile */
+    .calendar-grid { gap: 4px; max-width: 100%; }
+    .calendar-day { font-size: 0.8rem; border-radius: 6px; }
+}
